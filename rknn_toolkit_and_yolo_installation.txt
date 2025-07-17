@@ -1,0 +1,72 @@
+# References:
+# https://github.com/airockchip/rknn-toolkit2
+# http://www.orangepi.org/orangepiwiki/index.php/Orange_Pi_5_Ultra#Model_conversion_and_model_inference_using_RKNN-Toolkit2
+# See also: https://docs.ultralytics.com/integrations/rockchip-rknn/
+
+# NPU info
+sudo cat /sys/kernel/debug/rknpu/version
+sudo cat /sys/kernel/debug/rknpu/load
+
+mkdir rknn-toolkit2_v2
+cd rknn-toolkit2_v2
+python3 -m venv venv
+. venv/bin/activate
+pip3 install -U ultralytics
+# Download and install latest rockchip librknnt.so
+wget https://github.com/airockchip/rknn-toolkit2/raw/refs/heads/master/rknpu2/runtime/Linux/librknn_api/aarch64/librknnrt.so
+sudo mv librknnrt.so /usr/lib
+# Install rknn-toolkit-lite2
+pip3 install rknn-toolkit-lite2
+
+# ON Desktop-PC (AMD64 required!)
+# Open up https://docs.radxa.com/en/rock5/rock5c/app-development/rknn_ultralytics
+# Convert your model of choice from ultralytics on desktop PC
+# We've converted the following:
+yolo export model=yolo11s.pt format=rknn name=rk3588
+yolo export model=yolo11n.pt format=rknn name=rk3588
+#Copy the folders orangepi/radxa
+
+
+# Test on the board
+# Large model
+yolo predict model='./yolo11n_rknn_model' source='https://ultralytics.com/images/bus.jpg'
+# Small model
+yolo predict model='./yolo11s_rknn_model' source='https://ultralytics.com/images/bus.jpg'
+
+
+
+
+
+#Installation on desktop
+mkdir yolo_training
+cd yolo_training
+#Enable access to system packages as well so we can use colcon etc
+#See also: https://answers.ros.org/question/414012/
+python3 -m venv venv --system-site-packages --symlinks
+
+source venv/bin/activate
+#See also https://pytorch.org/get-started/locally/
+#Install with cuda 12.8 support
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+
+#Bu iptal olabilir, arada yolo_ros kuracagiz o da ultralytics kuruyor zaten (farkli versiyon kuruyor)
+# Install the ultralytics package from PyPI
+pip install ultralytics
+
+
+
+#Installation on desktop v2
+sudo apt install pipx
+
+BUNLARI UNINSTALL ET
+sudo apt install python3-filelock python3-typing-extensions python3-setuptools python3-sympy python3-networkx python3-jinja2 python3-fsspec python3-triton python3-numpy python3-mpmath python3-markupsafe
+
+venv aktive edilince BUNUN PATH'e eklenmesi lazim
+export PYTHONPATH='/home/vahapt/temporary_overlays/yolo_ros_ws/venv/lib/python3.12/site-packages':$PYTHONPATH 
+
+BU HAYAT KURTARDI
+https://robotics.stackexchange.com/questions/98214/how-to-use-python-virtual-environments-with-ros2
+
+
+/ros_gz_.*
+-/bond,-/camera*
