@@ -150,6 +150,10 @@ class DebugNode(LifecycleNode):
             round(box_msg.center.position.y + box_msg.size.y / 2.0),
         )
 
+        center_pt = (
+            round(box_msg.center.position.x), round(box_msg.center.position.y)
+        )
+
         # define the four corners of the rectangle
         rect_pts = np.array(
             [
@@ -175,6 +179,9 @@ class DebugNode(LifecycleNode):
             pt1 = tuple(rect_pts[i])
             pt2 = tuple(rect_pts[(i + 1) % 4])
             cv2.line(cv_image, pt1, pt2, color, 2)
+
+        cv2.line(cv_image, (center_pt[0] - 5, center_pt[1]), (center_pt[0] + 5, center_pt[1]), color, 2)
+        cv2.line(cv_image, (center_pt[0], center_pt[1] - 5), (center_pt[0], center_pt[1] + 5), color, 2)
 
         # write text
         label = f"{class_name}"
@@ -335,6 +342,13 @@ class DebugNode(LifecycleNode):
         bb_marker_array = MarkerArray()
         kp_marker_array = MarkerArray()
 
+        # Draw a green crosshair at the center of the image
+        green_color = (0, 255, 0)
+        cv2.line(cv_image, (cv_image.shape[1] // 2 - 10, cv_image.shape[0] // 2),
+                 (cv_image.shape[1] // 2 + 10, cv_image.shape[0] // 2), green_color, 1)
+        cv2.line(cv_image, (cv_image.shape[1] // 2, cv_image.shape[0] // 2 - 10),
+                 (cv_image.shape[1] // 2, cv_image.shape[0] // 2 + 10), green_color, 1)
+        
         detection: Detection
         for detection in detection_msg.detections:
 

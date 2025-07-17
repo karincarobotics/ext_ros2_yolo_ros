@@ -20,7 +20,6 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch.conditions import IfCondition
 
-
 def generate_launch_description():
 
     def run_yolo(context: LaunchContext, use_tracking, use_3d):
@@ -149,6 +148,13 @@ def generate_launch_description():
             description="Specific reliability QoS of the input image topic (0=system default, 1=Reliable, 2=Best Effort)",
         )
 
+        classes = LaunchConfiguration("classes")
+        classes_cmd = DeclareLaunchArgument(
+            name="classes",
+            default_value="",
+            description="List of classes to be detected (comma-separated)",
+        )
+
         input_depth_topic = LaunchConfiguration("input_depth_topic")
         input_depth_topic_cmd = DeclareLaunchArgument(
             "input_depth_topic",
@@ -248,6 +254,7 @@ def generate_launch_description():
                     "agnostic_nms": agnostic_nms,
                     "retina_masks": retina_masks,
                     "image_reliability": image_reliability,
+                    "classes": classes,
                 }
             ],
             remappings=[("image_raw", input_image_topic)],
@@ -316,6 +323,7 @@ def generate_launch_description():
             retina_masks_cmd,
             input_image_topic_cmd,
             image_reliability_cmd,
+            classes_cmd,
             input_depth_topic_cmd,
             depth_image_reliability_cmd,
             input_depth_info_topic_cmd,

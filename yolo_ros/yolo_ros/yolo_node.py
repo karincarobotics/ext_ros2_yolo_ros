@@ -68,6 +68,8 @@ class YoloNode(LifecycleNode):
         self.declare_parameter("augment", False)
         self.declare_parameter("agnostic_nms", False)
         self.declare_parameter("retina_masks", False)
+        self.declare_parameter("classes", "")
+
 
         self.type_to_model = {"YOLO": YOLO, "World": YOLOWorld}
 
@@ -104,6 +106,16 @@ class YoloNode(LifecycleNode):
         self.retina_masks = (
             self.get_parameter("retina_masks").get_parameter_value().bool_value
         )
+
+        self.classes = self.get_parameter("classes").get_parameter_value().string_value
+        if self.classes == "":
+            self.classes = None
+        else:
+            try:
+                self.classes = [int(cls.strip()) for cls in self.classes.split(",")]
+            except ValueError:
+                self.get_logger().error("Invalid format for classes parameter. Expecting comma-separated integers.")
+                return TransitionCallbackReturn.ERROR
 
         # ros params
         self.enable = self.get_parameter("enable").get_parameter_value().bool_value
@@ -345,6 +357,7 @@ class YoloNode(LifecycleNode):
                 agnostic_nms=self.agnostic_nms,
                 retina_masks=self.retina_masks,
                 device=self.device,
+                classes=self.classes
             )
             results: Results = results[0].cpu()
 

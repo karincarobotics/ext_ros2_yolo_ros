@@ -20,34 +20,50 @@ from launch.substitutions import LaunchConfiguration
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
+from launch.actions import DeclareLaunchArgument
 
 
 def generate_launch_description():
+    # Create the launch description and populate
+    ld = LaunchDescription()
 
-    return LaunchDescription(
-        [
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(
-                    os.path.join(
-                        get_package_share_directory("yolo_bringup"),
-                        "launch",
-                        "yolo.launch.py",
-                    )
-                ),
-                launch_arguments={
-                    "model": LaunchConfiguration("model", default="yolo11m.pt"),
-                    "tracker": LaunchConfiguration("tracker", default="bytetrack.yaml"),
-                    "device": LaunchConfiguration("device", default="cuda:0"),
-                    "enable": LaunchConfiguration("enable", default="True"),
-                    "threshold": LaunchConfiguration("threshold", default="0.5"),
-                    "input_image_topic": LaunchConfiguration(
-                        "input_image_topic", default="/camera/rgb/image_raw"
-                    ),
-                    "image_reliability": LaunchConfiguration(
-                        "image_reliability", default="1"
-                    ),
-                    "namespace": LaunchConfiguration("namespace", default="yolo"),
-                }.items(),
+    namespace = LaunchConfiguration('namespace')
+    declare_namespace_cmd = DeclareLaunchArgument(
+        name='namespace',
+        default_value='',
+        description='Top-level namespace')
+    ld.add_action(declare_namespace_cmd)
+
+    x = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory("yolo_bringup"),
+                "launch",
+                "yolo.launch.py",
             )
-        ]
+        ),
+        launch_arguments={
+            "classes": LaunchConfiguration("classes", default='"0"'),  #track only persons
+            "model": LaunchConfiguration("model", default="yolo11n.pt"),
+            "tracker": LaunchConfiguration("tracker", default="bytetrack.yaml"),
+            "device": LaunchConfiguration("device", default="cuda:0"),
+            "enable": LaunchConfiguration("enable", default="True"),
+            "threshold": LaunchConfiguration("threshold", default="0.75"),
+            "use_debug": LaunchConfiguration("use_debug", default="False"),
+            "input_image_topic": LaunchConfiguration(
+                "input_image_topic", default="/camera_turret/color/image_raw"
+            ),
+            "image_reliability": LaunchConfiguration(
+                "image_reliability", default="1"
+            ),
+            "namespace": namespace
+        }.items(),
     )
+
+    ld.add_action(x)
+
+    #Launch debugger separately
+    #ros2 run yolo_ros debug_node --ros-args -p image_reliability:=1 --remap image_raw:=/camera_turret/color/image_raw --remap detections:=/tracking
+
+
+    return ld
