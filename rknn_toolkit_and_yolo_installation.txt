@@ -89,11 +89,10 @@ sudo apt install python3-filelock python3-typing-extensions python3-setuptools p
 
 ros2 launch karinca_turret bringup_manipulator_only_launch.py
 ros2 launch yolo_bringup bringup_camera_launch.py
-ros2 launch yolo_bringup yolov11.launch.py model:=/home/orangepi/Projects/yolo_ros_ws/src/yolo_ros/yolo_bringup/models/yolo11n_rknn_model device:=cpu
-ros2 launch yolo_bringup yolov11.launch.py device:=cpu
+ ros2 launch yolo_bringup yolov11_opi.launch.py
 /home/orangepi/Projects/testudo_docta_deploy/install/karinca_turret/bin/karinca_turret/karinca_turret_controller 
 
 #Debug stuff
 ros2 run rqt_image_view rqt_image_view
-ros2 run yolo_ros debug_node --ros-args   -p image_reliability:=1   --remap image_raw:=/camera_turret/color/image_raw   --remap detections:=/tracking
+ros2 run yolo_ros debug_node --ros-args   -p image_reliability:=1   --remap image_raw:=/camera_turret/color/image_raw   --remap detections:=/detections
 ros2 topic pub -r 5 /commands std_msgs/msg/Float64MultiArray '{data: [0.01, 0.01]}'
