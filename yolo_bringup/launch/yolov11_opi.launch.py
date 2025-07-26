@@ -53,7 +53,7 @@ def generate_launch_description():
             "use_debug": LaunchConfiguration("use_debug", default="False"),
             "imgsz_width": LaunchConfiguration("imgsz_width", default="640"),
             "imgsz_height": LaunchConfiguration("imgsz_height", default="640"),
-            "use_tracking": LaunchConfiguration("use_tracking", default="False"),
+            "use_tracking": LaunchConfiguration("use_tracking", default="True"),
             "half": LaunchConfiguration("half", default="True"),
             "input_image_topic": LaunchConfiguration(
                 "input_image_topic", default="/camera_turret/color/image_raw"
