@@ -1,3 +1,6 @@
+!!!!!!!!!!!!!!!!!!!!!!!DEPRECATED!!!!!!!!!!!!!!!!!!!!
+!!!!!Read README_yolo_ros_installation.md instead!!!!
+
 # References:
 # https://github.com/airockchip/rknn-toolkit2
 # http://www.orangepi.org/orangepiwiki/index.php/Orange_Pi_5_Ultra#Model_conversion_and_model_inference_using_RKNN-Toolkit2
@@ -17,8 +20,10 @@ mkdir yolo_ros_ws
 cd yolo_ros_ws
 mkdir src
 cd src
-git clone https://github.com/resdocta/yolo_ros.git
+git clone https://github.com/karincarobotics/ext_ros2_yolo_ros.git
 cd ../..
+
+#The section below is moved
 
 #Enable access to system packages as well so we can use colcon etc
 #See also: https://answers.ros.org/question/414012/
